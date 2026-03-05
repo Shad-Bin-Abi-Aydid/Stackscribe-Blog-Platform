@@ -42,7 +42,7 @@ model Comment {
   post     Post    @relation(fields: [postId], references: [id])
   parentId String?
 
-// Comment with his own replies relationship
+// Comment with his own replies -> relationship
   parent    Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
   replies   Comment[]     @relation("CommentReplies")
 
