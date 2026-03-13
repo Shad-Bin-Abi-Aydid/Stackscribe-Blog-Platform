@@ -1,6 +1,7 @@
 import { Post } from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
+import { PostStatus } from "../../../generated/prisma/enums";
 
 // Create posts
 const createPost = async (
@@ -21,11 +22,15 @@ const createPost = async (
 const getAllPost = async ({
   search,
   tags,
-  isFeatured
+  isFeatured,
+  status,
+  authorId
 }: {
-  search: string;
-  tags: string[];
-  isFeatured: boolean | undefined;
+  search: string,
+  tags: string[],
+  isFeatured: boolean | undefined,
+  status: PostStatus | undefined,
+  authorId: string | undefined
 }) => {
   // create an array where we keep the true value only
   const andConditions: PostWhereInput[] = [];
@@ -59,6 +64,11 @@ const getAllPost = async ({
     andConditions.push({isFeatured})
   }
 
+
+  if(status){
+    andConditions.push({status})
+  }
+
   // check the multiple tags search are true or not if true then push it to the array
   if (tags.length > 0) {
     andConditions.push({
@@ -66,6 +76,11 @@ const getAllPost = async ({
         hasEvery: tags as string[],
       },
     });
+  }
+
+
+  if(authorId){
+    andConditions.push({authorId})
   }
 
   const allPost = await prisma.post.findMany({
