@@ -24,13 +24,23 @@ const getAllPost = async ({
   tags,
   isFeatured,
   status,
-  authorId
+  authorId,
+  page,
+  limit,
+  skip,
+  sortBy,
+  sortOrder,
 }: {
-  search: string,
-  tags: string[],
-  isFeatured: boolean | undefined,
-  status: PostStatus | undefined,
-  authorId: string | undefined
+  search: string;
+  tags: string[];
+  isFeatured: boolean | undefined;
+  status: PostStatus | undefined;
+  authorId: string | undefined;
+  page: number;
+  limit: number;
+  skip: number;
+  sortBy: string;
+  sortOrder: string;
 }) => {
   // create an array where we keep the true value only
   const andConditions: PostWhereInput[] = [];
@@ -60,13 +70,12 @@ const getAllPost = async ({
     });
   }
 
-  if(typeof isFeatured === 'boolean'){
-    andConditions.push({isFeatured})
+  if (typeof isFeatured === "boolean") {
+    andConditions.push({ isFeatured });
   }
 
-
-  if(status){
-    andConditions.push({status})
+  if (status) {
+    andConditions.push({ status });
   }
 
   // check the multiple tags search are true or not if true then push it to the array
@@ -78,21 +87,70 @@ const getAllPost = async ({
     });
   }
 
-
-  if(authorId){
-    andConditions.push({authorId})
+  if (authorId) {
+    andConditions.push({ authorId });
   }
 
   const allPost = await prisma.post.findMany({
+    take: limit,
+    skip,
+    where: {
+      AND: andConditions,
+    },
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+  });
+
+  // retrieve metadata from the database
+  const total = await prisma.post.count({
     where: {
       AND: andConditions,
     },
   });
 
-  return allPost;
+  return {
+    data: allPost,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
+// Get single post
+const getPostById = async (postId: string) => {
+  const result = await prisma.$transaction(async (tranVariable) => {
+
+    // update viewCount
+    await tranVariable.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+    });
+
+    // Get the post data
+    const postData = await tranVariable.post.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+
+    return postData;
+  });
+
+  return result;
 };
 
 export const postServices = {
   createPost,
   getAllPost,
+  getPostById,
 };
