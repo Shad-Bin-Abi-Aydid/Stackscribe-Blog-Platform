@@ -100,6 +100,13 @@ const getAllPost = async ({
     orderBy: {
       [sortBy]: sortOrder,
     },
+    include:{
+      _count:{
+        select:{
+          comments:true
+        }
+      }
+    }
   });
 
   // retrieve metadata from the database
@@ -123,7 +130,6 @@ const getAllPost = async ({
 // Get single post
 const getPostById = async (postId: string) => {
   const result = await prisma.$transaction(async (tranVariable) => {
-
     // update viewCount
     await tranVariable.post.update({
       where: {
@@ -136,10 +142,33 @@ const getPostById = async (postId: string) => {
       },
     });
 
-    // Get the post data
+    // Get the post data uniquely
     const postData = await tranVariable.post.findUnique({
       where: {
         id: postId,
+      },
+      include: {
+        comments: {
+          where: {
+            parentId: null,
+          },
+          orderBy: { createdAt: "desc" },
+          include: {
+            replies: {
+              orderBy: { createdAt: "asc" },
+              include: {
+                replies: {
+                  orderBy: { createdAt: "asc" },
+                },
+              },
+            },
+          },
+        },
+        _count:{
+          select:{
+            comments:true,
+          }
+        }
       },
     });
 
