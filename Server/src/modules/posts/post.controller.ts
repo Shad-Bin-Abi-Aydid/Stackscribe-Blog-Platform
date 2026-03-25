@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { postServices } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortingHelper from "../../helpers/paginationSortingHelper";
 import { UserRole } from "../../middlewares/auth";
 
 // Create posts
-const createPost = async (req: Request, res: Response) => {
+const createPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.user) {
       return res.status(400).json({
@@ -18,10 +18,7 @@ const createPost = async (req: Request, res: Response) => {
     );
     res.status(200).send(result);
   } catch (err: any) {
-    res.status(400).json({
-      error: "Post Creation Failed",
-      details: err,
-    });
+    next(err);
   }
 };
 
@@ -115,7 +112,7 @@ const getMyPost = async (req: Request, res: Response) => {
 };
 
 // Update Post
-const updatePost = async (req: Request, res: Response) => {
+const updatePost = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const user = req.user;
     if (!user) {
@@ -124,7 +121,7 @@ const updatePost = async (req: Request, res: Response) => {
     const { postId } = req.params;
 
     const isAdmin = user.role === UserRole.ADMIN;
-    console.log(user)
+    console.log(user);
 
     const result = await postServices.updatePost(
       postId as string,
@@ -137,9 +134,7 @@ const updatePost = async (req: Request, res: Response) => {
       result,
     });
   } catch (err: any) {
-    res.status(400).json({
-      error: err.message || "Update post failed",
-    });
+    next(err)
   }
 };
 
@@ -157,7 +152,7 @@ const deletePost = async (req: Request, res: Response) => {
     const result = await postServices.deletePost(
       postId as string,
       user.id as string,
-      isAdmin
+      isAdmin,
     );
 
     res.status(200).json({
@@ -173,8 +168,6 @@ const deletePost = async (req: Request, res: Response) => {
 // Statistics and Analytics API data
 const getStats = async (req: Request, res: Response) => {
   try {
-    
-
     const result = await postServices.getStats();
 
     res.status(200).json({
