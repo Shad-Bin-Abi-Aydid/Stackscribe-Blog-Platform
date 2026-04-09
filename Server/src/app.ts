@@ -9,9 +9,15 @@ import { notFound } from './middlewares/notFound';
 
 const app = express();
 
+const allowedOrigins = [
+    process.env.APP_URL || "http://localhost:4000",
+    "http://localhost:3000",
+    "http://localhost:3001",
+];
+
 app.use(cors({
-    origin:process.env.APP_URL || "http://localhost:4000",
-    credentials:true
+    origin: allowedOrigins,
+    credentials: true,
 }))
 
 app.use(express.json());
