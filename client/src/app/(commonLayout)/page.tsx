@@ -1,10 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { userServices } from "@/services/user.services";
+import { blogService } from "@/services/blog.service";
 
 export default async function Home() {
-  const { data } = await userServices.getSession();
-
-  console.log(data);
+  const {data} = await blogService.getBlogPosts();
+  console.log(data)
   return (
     <div>
       <Button variant="outline">Click Me</Button>
