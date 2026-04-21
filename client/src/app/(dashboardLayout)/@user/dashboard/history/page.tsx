@@ -1,0 +1,31 @@
+import HistoryTable from "@/components/modules/user/history/HistoryTable";
+import PaginationControls from "@/components/ui/pagination-controls";
+import { blogService } from "@/services/blog.service";
+import React from "react";
+
+export default async function HistoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page: string }>;
+}) {
+  // Read ?page= from URL
+  const { page } = await searchParams;
+
+  // Fetch with page param
+  const response = await blogService.getBlogPosts({ page });
+
+  const posts = response?.data?.data || [];
+  const pagination = response?.data?.pagination || {
+    limit: 10,
+    page: 1,
+    total: 0,
+    totalPages: 1,
+  };
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-6">Blog Post History</h1>
+      <HistoryTable posts={posts}></HistoryTable>
+      <PaginationControls meta={pagination}></PaginationControls>
+    </div>
+  );
+}
