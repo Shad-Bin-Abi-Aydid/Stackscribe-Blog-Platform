@@ -4,7 +4,7 @@ import BlogCard from "./BlogCard";
 
 export default async function BlogList() {
   const { data } = await blogService.getBlogPosts(
-    { search: "" },
+    { limit: "9" },
     { revalidate: 10 },
   );
 

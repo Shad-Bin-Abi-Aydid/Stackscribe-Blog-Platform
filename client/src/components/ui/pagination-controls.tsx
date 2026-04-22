@@ -38,7 +38,7 @@ export default function PaginationControls({
   // Shows: "Showing 10 to 17 of 17 results"
  
   return (
-    <div className="flex items-center justify-between px-2 py-4 border-t mt-4">
+    <div className="flex items-center justify-around px-2 py-4 border-t mt-4">
       <div className="text-sm text-muted-foreground">
         Showing {start} to {end} of {total} results
       </div>

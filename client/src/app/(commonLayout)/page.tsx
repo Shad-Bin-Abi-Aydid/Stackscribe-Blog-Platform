@@ -3,10 +3,10 @@ import HeroSection from "@/components/layout/HeroSection";
 import BlogList from "@/components/modules/homepage/BlogList";
 import BlogCardSkeleton from "@/components/modules/homepage/BlogCardSkeleton";
 
-function BlogListSkeleton() {
+export function BlogListSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {Array.from({ length: 6 }).map((_, i) => (
+      {Array.from({ length: 9 }).map((_, i) => (
         <BlogCardSkeleton key={i} />
       ))}
     </div>
