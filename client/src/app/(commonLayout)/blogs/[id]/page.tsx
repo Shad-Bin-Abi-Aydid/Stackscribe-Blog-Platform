@@ -7,7 +7,7 @@ import { Eye, MessageCircle } from "lucide-react";
 // This function return array of id = [{id:afrvbgfgb}, {id:urtgksjdbviu}, ....]
 export async function generateStaticParams() {
   const { data } = await blogService.getBlogPosts();
-  data?.data?.map((blog: BlogPost) => ({ id: blog.id }));
+  return data?.data?.map((blog: BlogPost) => ({ id: blog.id }));
 
   // data?.data?.map((blog:BlogPost) => ({ id: blog.id })).splice(0,3);
 }
