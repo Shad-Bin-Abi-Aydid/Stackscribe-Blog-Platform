@@ -1,6 +1,5 @@
 import { env } from "@/env";
 import { BlogData } from "@/types";
-import { error } from "console";
 import { cookies } from "next/headers";
 
 const API_URL = env.API_URL;
@@ -11,13 +10,13 @@ interface GetBlogsParams {
   search?: string;
   page?: string;
   limit?: string;
+  authorId?: string;
 }
 
 interface ServiceOptions {
   cache?: RequestCache;
   revalidate?: number;
 }
-
 
 export const blogService = {
   getBlogPosts: async function (
@@ -90,13 +89,36 @@ export const blogService = {
       });
 
       const data = await res.json();
-      if(data.error){
-        return {data:null, error: data.error || "Error: Post not Created"}
+      if (data.error) {
+        return { data: null, error: data.error || "Error: Post not Created" };
       }
 
-      return {data:data, error:null};
+      return { data: data, error: null };
     } catch (error) {
       return { data: null, error: { message: "Something Went Wrong" } };
+    }
+  },
+
+  // Delete a post
+  deleteBlogPost: async (id: string) => {
+    
+    try {
+      const cookieStore = await cookies();
+      const res = await fetch(`${API_URL}/posts/${id}`, {
+        method: "DELETE",
+        headers: {
+          Cookie: cookieStore.toString(),
+        },
+      });
+      
+      if (!res.ok) {
+        const error = await res.json();
+        return { data: null, error: error.message || "Failed to delete post" };
+      }
+
+      return { data: { message: "Delete Successful" }, error: null };
+    } catch (error) {
+      return { data: null, error: { message: "Something went wrong" } };
     }
   },
 };
