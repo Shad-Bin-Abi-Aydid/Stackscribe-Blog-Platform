@@ -47,12 +47,14 @@ export default function MyBlogCard({ post }: { post: BlogPost }) {
 
           {/* Action buttons overlay */}
           <div className="absolute top-3 right-3 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
+            {/* for update */}
             <Link
               href={`/dashboard/edit-blog/${post.id}`}
               className="flex items-center justify-center h-8 w-8 rounded-full bg-white dark:bg-indigo-950 shadow-md text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 transition-colors"
             >
               <Pencil className="h-3.5 w-3.5" />
             </Link>
+            {/* delete */}
             <button
               onClick={() => setIsModalOpen(true)}
               className="flex items-center justify-center h-8 w-8 rounded-full bg-white dark:bg-indigo-950 shadow-md text-red-500 hover:bg-red-500 hover:text-white transition-colors"
@@ -155,7 +157,7 @@ export default function MyBlogCard({ post }: { post: BlogPost }) {
               >
                 Cancel
               </button>
-              
+
               {/* delete button */}
               <button
                 onClick={handleDelete}

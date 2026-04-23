@@ -7,6 +7,7 @@ import { authClient } from "@/lib/auth-client";
 import { useForm } from "@tanstack/react-form";
 import { BookOpen } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import * as z from "zod";
 
@@ -17,6 +18,7 @@ const formSchema = z.object({
 });
 
 export function RegisterForm() {
+  const router = useRouter();
   const handleGoogleLogin = async () => {
     await authClient.signIn.social({
       provider: "google",
@@ -37,6 +39,7 @@ export function RegisterForm() {
         }
         toast.success("Account created successfully", { id: toastId });
         form.reset();
+        router.push("/login");
       } catch {
         toast.error("Something went wrong, please try again", { id: toastId });
       }

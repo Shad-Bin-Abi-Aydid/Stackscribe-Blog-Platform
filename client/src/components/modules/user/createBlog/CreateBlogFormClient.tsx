@@ -1,6 +1,6 @@
 "use client";
 
-import { createBlogPost } from "@/actions/blog.action";
+import { createBlogPost, updateBlogPost } from "@/actions/blog.action";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,7 +18,9 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { BlogPost } from "@/types";
 import { useForm } from "@tanstack/react-form";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -34,18 +36,25 @@ const blogSchema = z.object({
   tags: z.string(),
 });
 
-export function CreateBlogFormClient() {
+export function CreateBlogFormClient({
+  initialData,
+}: {
+  initialData?: BlogPost;
+}) {
+  const router = useRouter();
   const form = useForm({
     defaultValues: {
-      title: "",
-      content: "",
-      tags: "",
+      title: initialData?.title ?? "",
+      content: initialData?.content ?? "",
+      tags: initialData?.tags?.join(",") ?? "",
     },
     validators: {
       onSubmit: blogSchema,
     },
     onSubmit: async ({ value }) => {
-      const toastId = toast.loading("Creating....");
+      const toastId = toast.loading(
+        initialData ? "Updating..." : "Creating...",
+      );
 
       const blogData = {
         title: value.title,
@@ -57,15 +66,20 @@ export function CreateBlogFormClient() {
       };
 
       try {
-        const res = await createBlogPost(blogData);
+        const res = initialData
+          ? await updateBlogPost(initialData.id as string, blogData)
+          : await createBlogPost(blogData);
 
         if (res.error) {
           toast.error(res.error.message, { id: toastId });
           return;
         }
 
-        toast.success("Post Created", { id: toastId });
+        toast.success(initialData ? "Post Updated" : "Post Created", {
+          id: toastId,
+        });
         form.reset();
+        router.push("/dashboard/my-blogs");
       } catch (err) {
         toast.error("Something Went Wrong", { id: toastId });
       }
@@ -75,7 +89,9 @@ export function CreateBlogFormClient() {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>Create a Blog Post</CardTitle>
+        <CardTitle>
+          {initialData ? "Edit Blog Post" : "Create a Blog Post"}
+        </CardTitle>
         <CardDescription>
           Fill in the details below to publish your blog post
         </CardDescription>
@@ -164,7 +180,7 @@ export function CreateBlogFormClient() {
       </CardContent>
       <CardFooter className="flex flex-col">
         <Button form="blog-post" type="submit" className="w-full">
-          Submit
+          {initialData ? "Save Changes" : "Submit"}
         </Button>
       </CardFooter>
     </Card>

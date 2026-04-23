@@ -21,8 +21,16 @@ export const createBlogPost = async (data: BlogData) => {
 export const deleteBlog = async (id: string) => {
   const res = await blogService.deleteBlogPost(id);
 
-  // here we can do the cache revalidation, for that it will 
+  // here we can do the cache revalidation, for that it will
   // delete instantly from the ui
+  updateTag("blogPosts");
+
+  return res;
+};
+
+// update Blog Post
+export const updateBlogPost = async (id: string, data: BlogData) => {
+  const res = await blogService.updateBlogPost(id, data);
   updateTag("blogPosts");
 
   return res;

@@ -101,7 +101,6 @@ export const blogService = {
 
   // Delete a post
   deleteBlogPost: async (id: string) => {
-    
     try {
       const cookieStore = await cookies();
       const res = await fetch(`${API_URL}/posts/${id}`, {
@@ -110,13 +109,38 @@ export const blogService = {
           Cookie: cookieStore.toString(),
         },
       });
-      
+
       if (!res.ok) {
         const error = await res.json();
         return { data: null, error: error.message || "Failed to delete post" };
       }
 
       return { data: { message: "Delete Successful" }, error: null };
+    } catch (error) {
+      return { data: null, error: { message: "Something went wrong" } };
+    }
+  },
+
+  // update a post
+  // it will combination of delete(id cookies) and createBlogPost
+  updateBlogPost: async (id: string, blogData: BlogData) => {
+    try {
+      const cookieStore = await cookies();
+      const res = await fetch(`${API_URL}/posts/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieStore.toString(),
+        },
+        body: JSON.stringify(blogData),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        return { data: null, error: error.message || "Failed to update post" };
+      }
+
+      return { data: null, error: null };
     } catch (error) {
       return { data: null, error: { message: "Something went wrong" } };
     }
