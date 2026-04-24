@@ -20,9 +20,31 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { BlogPost } from "@/types";
 import { useForm } from "@tanstack/react-form";
+import { ImagePlus, Loader2, X } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+
+const uploadToCloudinary = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append(
+    "upload_preset",
+    process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!,
+  );
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+    { method: "POST", body: formData },
+  );
+
+  if (!res.ok) throw new Error("Image upload failed");
+
+  const data = await res.json();
+  return data.secure_url as string;
+};
 
 const blogSchema = z.object({
   title: z
@@ -42,6 +64,12 @@ export function CreateBlogFormClient({
   initialData?: BlogPost;
 }) {
   const router = useRouter();
+
+  // for uploading the image
+  const [thumbnail, setThumbnail] = useState<string>("");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const form = useForm({
     defaultValues: {
       title: initialData?.title ?? "",
@@ -63,6 +91,7 @@ export function CreateBlogFormClient({
           .split(",")
           .map((item) => item.trim())
           .filter((item) => item !== ""),
+          thumbnail,
       };
 
       try {
@@ -175,6 +204,69 @@ export function CreateBlogFormClient({
                 );
               }}
             />
+            {/* Thumbnail Image */}
+            <Field>
+              <FieldLabel>Thumbnail Image</FieldLabel>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                disabled={uploading}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setUploading(true);
+                  try {
+                    const url = await uploadToCloudinary(file);
+                    setThumbnail(url);
+                  } catch {
+                    toast.error("Image upload failed");
+                  } finally {
+                    setUploading(false);
+                  }
+                }}
+              />
+              {thumbnail ? (
+                <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-indigo-100 dark:border-indigo-900">
+                  <Image
+                    src={thumbnail}
+                    alt="Thumbnail preview"
+                    fill
+                    className="object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setThumbnail("");
+                      if (fileInputRef.current) fileInputRef.current.value = "";
+                    }}
+                    className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1 transition"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  disabled={uploading}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-indigo-200 dark:border-indigo-800 rounded-xl py-8 text-slate-400 hover:border-indigo-400 hover:text-indigo-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="size-6 animate-spin" />
+                      <span className="text-sm">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ImagePlus className="size-6" />
+                      <span className="text-sm">Click to upload thumbnail</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </Field>
           </FieldGroup>
         </form>
       </CardContent>

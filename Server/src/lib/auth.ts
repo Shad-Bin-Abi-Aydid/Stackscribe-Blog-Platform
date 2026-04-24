@@ -60,7 +60,7 @@ export const auth = betterAuth({
         // From the doc (nodemailer)
         const info = await transporter.sendMail({
           from: '"Stackscribe Blog" <stackscribe@blogtest.email>',
-          to: "shadaydid@gmail.com",
+          to: user.email,
           subject: "Verify your email address",
           text: `Verify your email: ${verificationUrl}`,
           html: `

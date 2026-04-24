@@ -19,9 +19,10 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ModeToggle } from "./ModeToggle";
+import { authClient } from "@/lib/auth-client";
 
 interface MenuItem {
   title: string;
@@ -43,6 +44,7 @@ interface Navbar1Props {
   menu?: MenuItem[];
   auth?: {
     login: { title: string; url: string };
+    logout: { title: string; url: string };
     signup: { title: string; url: string };
   };
 }
@@ -58,6 +60,7 @@ const Navbar = ({
   ],
   auth = {
     login: { title: "Login", url: "/login" },
+    logout: { title: "Logout", url: "/logout" },
     signup: { title: "Register", url: "/register" },
   },
   className,
@@ -70,6 +73,22 @@ const Navbar = ({
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // need for after logout navigate the user
+  const router = useRouter();
+
+  // get the session
+  const { data: session } = authClient.useSession();
+
+  // Handle the logout functionality
+
+  const handleLogout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => router.push("/login"),
+      },
+    });
+  };
 
   return (
     <section
@@ -102,21 +121,39 @@ const Navbar = ({
           {/* Auth — right */}
           <div className="flex gap-2 items-center shrink-0">
             <ModeToggle />
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-300 dark:hover:bg-indigo-900/40"
-            >
-              <Link href={auth.login.url}>{auth.login.title}</Link>
-            </Button>
-            <Button
-              asChild
-              size="sm"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
-            >
-              <Link href={auth.signup.url}>{auth.signup.title}</Link>
-            </Button>
+
+            {session ? (
+              // Logout
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                size="sm"
+                className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-300 dark:hover:bg-indigo-900/40"
+              >
+                {auth.logout.title}
+              </Button>
+            ) : (
+              <>
+                {/* Login */}
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-300 dark:hover:bg-indigo-900/40"
+                >
+                  <Link href={auth.login.url}>{auth.login.title}</Link>
+                </Button>
+
+                {/* Register */}
+                <Button
+                  asChild
+                  size="sm"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                >
+                  <Link href={auth.signup.url}>{auth.signup.title}</Link>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
 
@@ -153,19 +190,37 @@ const Navbar = ({
                   </Accordion>
                   <div className="flex flex-col gap-3">
                     <ModeToggle />
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-300"
-                    >
-                      <Link href={auth.login.url}>{auth.login.title}</Link>
-                    </Button>
-                    <Button
-                      asChild
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                    >
-                      <Link href={auth.signup.url}>{auth.signup.title}</Link>
-                    </Button>
+                    {session ? (
+                      // Logout
+                      <Button
+                        onClick={handleLogout}
+                        variant="outline"
+                        className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-300"
+                      >
+                        {auth.logout.title}
+                      </Button>
+                    ) : (
+                      <>
+                        {/* Login */}
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-300"
+                        >
+                          <Link href={auth.login.url}>{auth.login.title}</Link>
+                        </Button>
+
+                        {/* Register */}
+                        <Button
+                          asChild
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                        >
+                          <Link href={auth.signup.url}>
+                            {auth.signup.title}
+                          </Link>
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               </SheetContent>

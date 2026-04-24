@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import * as z from "zod";
 
+// Zod Validation
 const formSchema = z.object({
   password: z.string().min(8, "Minimum length is 8"),
   email: z.email(),
