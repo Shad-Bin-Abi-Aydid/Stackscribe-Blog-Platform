@@ -10,7 +10,7 @@ async function main(){
         console.log('connected to the database successfully');
 
         // now run the server to the specific port
-        app.listen(PORT, ()=>{
+        app.listen(Number(PORT), '0.0.0.0', ()=>{
             console.log(`Server is running on ${PORT}`);
         })
 
