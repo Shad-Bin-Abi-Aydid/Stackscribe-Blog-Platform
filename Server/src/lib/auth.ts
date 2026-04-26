@@ -17,9 +17,10 @@ async function sendEmail(to: string, subject: string, html: string) {
     }),
   });
 
+  const responseText = await res.text();
+  console.log("Brevo response status:", res.status, "body:", responseText);
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Brevo error: ${err}`);
+    throw new Error(`Brevo error: ${responseText}`);
   }
 }
 
