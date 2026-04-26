@@ -4,11 +4,16 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { Eye, MessageCircle } from "lucide-react";
 
-// Render each blog page on-demand at request time (always fresh data)
-export const dynamic = "force-dynamic";
+// dynamicParams = true allows pages not in generateStaticParams to render on demand
+export const dynamicParams = true;
 
-// Disabled static generation — was crashing at build time when Next.js tried to pre-render all blog pages
-// export const dynamicParams = true;
+// Returning [] skips pre-rendering at build time; pages are rendered on request instead
+export async function generateStaticParams() {
+  return [];
+}
+
+// Disabled — was crashing at build time when Next.js tried to pre-render all blog pages
+// export const dynamic = "force-dynamic";
 // export async function generateStaticParams() {
 //   try {
 //     const response = await blogService.getBlogPosts();
