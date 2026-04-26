@@ -1,9 +1,17 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.BREVO_USER,
+    pass: process.env.BREVO_KEY,
+  },
+});
 
 // If your Prisma file is located elsewhere, you can change the path
 export const auth = betterAuth({
@@ -55,8 +63,9 @@ export const auth = betterAuth({
     sendVerificationEmail: async ({ user, url, token }, request) => {
       const verificationUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
 
-        const { error } = await resend.emails.send({
-          from: "Stackscribe Blog <onboarding@resend.dev>",
+      try {
+        await transporter.sendMail({
+          from: '"Stackscribe Blog" <shadaydid@gmail.com>',
           to: user.email,
           subject: "Verify your email address",
           html: `
@@ -97,11 +106,10 @@ export const auth = betterAuth({
               </html>
               `,
         });
-
-        if (error) {
-          console.error("Resend error:", error);
-          throw new Error(error.message);
-        }
+      } catch (err: any) {
+        console.error("Email error:", err.message);
+        throw err;
+      }
     },
   },
 
