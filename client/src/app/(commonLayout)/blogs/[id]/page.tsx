@@ -5,11 +5,16 @@ import Image from "next/image";
 import { Eye, MessageCircle } from "lucide-react";
 
 // This function return array of id = [{id:afrvbgfgb}, {id:urtgksjdbviu}, ....]
-export async function generateStaticParams() {
-  const { data } = await blogService.getBlogPosts();
-  return data?.data?.map((blog: BlogPost) => ({ id: blog.id }));
+export const dynamicParams = true;
 
-  // data?.data?.map((blog:BlogPost) => ({ id: blog.id })).splice(0,3);
+export async function generateStaticParams() {
+  try {
+    const response = await blogService.getBlogPosts();
+    const posts = response?.data?.data || [];
+    return posts.map((blog: BlogPost) => ({ id: blog.id }));
+  } catch (error) {
+    return [];
+  }
 }
 
 export default async function BlogPage({
@@ -44,7 +49,7 @@ export default async function BlogPage({
       )}
 
       {/* Tags */}
-      {post.tags && post.tags.length > 0 && (
+      {post?.tags?.length ? (
         <div className="flex flex-wrap gap-2 mb-4">
           {post.tags.map((tag, index) => (
             <Badge key={index} variant="secondary" className="text-xs">
@@ -52,7 +57,7 @@ export default async function BlogPage({
             </Badge>
           ))}
         </div>
-      )}
+      ) : null}
 
       {/* Title */}
       <h1 className="text-3xl font-bold leading-tight mb-4">{post.title}</h1>
