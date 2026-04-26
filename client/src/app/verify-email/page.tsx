@@ -1,19 +1,17 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { error } from "console";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { toast } from "sonner";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   useEffect(() => {
     const token = searchParams.get("token");
 
-    // if there have no token
     if (!token) return;
 
     authClient.verifyEmail({ query: { token } }).then(({ error }) => {
@@ -30,5 +28,19 @@ export default function VerifyEmailPage() {
     <div className="flex items-center justify-center min-h-screen">
       <p className="text-slate-500">Verifying your email...</p>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <p className="text-slate-500">Loading...</p>
+        </div>
+      }
+    >
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
