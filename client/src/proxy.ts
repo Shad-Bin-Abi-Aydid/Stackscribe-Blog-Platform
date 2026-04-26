@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { userServices } from "./services/user.services";
 import { Role } from "./constants/roles";
+import { env } from "./env";
 
 export async function proxy(request: NextRequest) {
   let isAdmin = false;
@@ -8,12 +8,20 @@ export async function proxy(request: NextRequest) {
 
   const pathName = request.nextUrl.pathname;
 
-  const { data } = await userServices.getSession();
-  // console.log(data)
+  try {
+    const res = await fetch(`${env.AUTH_URL}/get-session`, {
+      headers: {
+        Cookie: request.headers.get("cookie") || "",
+      },
+    });
+    const data = await res.json();
 
-  if (data) {
-    isAuthenticated = true;
-    isAdmin = data.user.role === Role.admin;
+    if (data && data.user) {
+      isAuthenticated = true;
+      isAdmin = data.user.role === Role.admin;
+    }
+  } catch {
+    // if session fetch fails, treat as unauthenticated
   }
 
   // check if user not authenticate then send them to the login
