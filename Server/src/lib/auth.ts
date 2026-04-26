@@ -4,12 +4,12 @@ import { prisma } from "./prisma";
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // Use true for port 465, false for port 587
+  host: "smtp.resend.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.APP_USER,
-    pass: process.env.APP_PASS,
+    user: "resend",
+    pass: process.env.RESEND_API_KEY,
   },
 });
 
@@ -18,6 +18,12 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql", // or "mysql", "postgresql", ...etc
   }),
+  advanced: {
+    defaultCookieAttributes: {
+      sameSite: "none",
+      secure: true,
+    },
+  },
   trustedOrigins: [
     process.env.APP_URL || "http://localhost:3000",
     "http://localhost:3000",
@@ -61,7 +67,7 @@ export const auth = betterAuth({
 
         // From the doc (nodemailer)
         const info = await transporter.sendMail({
-          from: '"Stackscribe Blog" <stackscribe@blogtest.email>',
+          from: '"Stackscribe Blog" <onboarding@resend.dev>',
           to: user.email,
           subject: "Verify your email address",
           text: `Verify your email: ${verificationUrl}`,
