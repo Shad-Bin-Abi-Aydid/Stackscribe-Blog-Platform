@@ -13,6 +13,8 @@ const allowedOrigins = [
     process.env.APP_URL || "http://localhost:4000",
     "http://localhost:3000",
     "http://localhost:3001",
+    "https://stackscribe-blog-platform.vercel.app",
+    "https://stackscribe-blog-platform-shad-aydids-projects.vercel.app",
 ];
 
 app.use(cors({
