@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Role } from "@/constants/roles";
 import { userServices } from "@/services/user.services";
+import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   admin,
@@ -26,6 +27,10 @@ export default async function DashboardLayout({
   user: React.ReactNode;
 }) {
   const {data} = await userServices.getSession();
+
+  if (!data || !data.user) {
+    redirect("/login");
+  }
 
   const userInfo = data.user;
 
