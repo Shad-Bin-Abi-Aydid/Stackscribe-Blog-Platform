@@ -20,8 +20,8 @@ export function AppSidebar({
   user,
   ...props
 }: {
-  user: { role: string } & React.ComponentProps<typeof Sidebar>;
-}) {
+  user: { role: string };
+} & React.ComponentProps<typeof Sidebar>) {
   let routes: Route[] = [];
 
   switch (user.role) {

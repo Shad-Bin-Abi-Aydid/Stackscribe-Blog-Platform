@@ -42,7 +42,7 @@ export function DashboardAuthGuard({
 
   if (!session?.user) return null;
 
-  const userInfo = session.user;
+  const userInfo = session.user as typeof session.user & { role: string; };
 
   return (
     <>
