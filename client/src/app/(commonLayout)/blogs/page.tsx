@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import BlogCardSkeleton from "@/components/modules/homepage/BlogCardSkeleton";
 import BlogList from "@/components/modules/homepage/BlogList";
 import React, { Suspense } from "react";
