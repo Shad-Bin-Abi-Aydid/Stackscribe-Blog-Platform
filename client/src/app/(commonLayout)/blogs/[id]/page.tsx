@@ -4,18 +4,20 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { Eye, MessageCircle } from "lucide-react";
 
-// This function return array of id = [{id:afrvbgfgb}, {id:urtgksjdbviu}, ....]
-export const dynamicParams = true;
+// Render each blog page on-demand at request time (always fresh data)
+export const dynamic = "force-dynamic";
 
-export async function generateStaticParams() {
-  try {
-    const response = await blogService.getBlogPosts();
-    const posts = response?.data?.data || [];
-    return posts.map((blog: BlogPost) => ({ id: blog.id }));
-  } catch (error) {
-    return [];
-  }
-}
+// Disabled static generation — was crashing at build time when Next.js tried to pre-render all blog pages
+// export const dynamicParams = true;
+// export async function generateStaticParams() {
+//   try {
+//     const response = await blogService.getBlogPosts();
+//     const posts = response?.data?.data || [];
+//     return posts.map((blog: BlogPost) => ({ id: blog.id }));
+//   } catch (error) {
+//     return [];
+//   }
+// }
 
 export default async function BlogPage({
   params,
