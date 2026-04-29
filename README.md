@@ -163,6 +163,10 @@ Frontend runs at **http://localhost:3000** | Backend runs at **http://localhost:
 
 ## 📡 API Endpoints
 
+[![Postman Docs](https://img.shields.io/badge/Postman-API_Docs-orange?style=for-the-badge&logo=postman)](https://documenter.getpostman.com/view/51503501/2sBXqJL1H9)
+
+> Full interactive API documentation is available on Postman — including request bodies, example responses, and environment setup.
+
 ### Posts
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|

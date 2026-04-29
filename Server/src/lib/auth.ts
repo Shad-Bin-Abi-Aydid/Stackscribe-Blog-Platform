@@ -37,6 +37,7 @@ export const auth = betterAuth({
   trustedOrigins: [
     process.env.APP_URL || "http://localhost:3000",
     "http://localhost:3000",
+    "http://localhost:4000",
     "https://stackscribe-blog-platform.vercel.app",
     "https://stackscribe-blog-platform-shad-aydids-projects.vercel.app",
   ],
