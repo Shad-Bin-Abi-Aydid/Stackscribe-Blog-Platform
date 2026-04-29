@@ -19,6 +19,7 @@ async function handler(request: NextRequest) {
     method: request.method,
     headers: requestHeaders,
     body,
+    redirect: "manual",
   });
 
   const responseHeaders = new Headers();
@@ -33,6 +34,14 @@ async function handler(request: NextRequest) {
   for (const cookie of setCookies) {
     const rewritten = cookie.replace(/;\s*domain=[^;]*/gi, "");
     responseHeaders.append("set-cookie", rewritten);
+  }
+
+  // Pass redirects through to the browser instead of following them internally
+  if (response.status >= 300 && response.status < 400) {
+    return new NextResponse(null, {
+      status: response.status,
+      headers: responseHeaders,
+    });
   }
 
   return new NextResponse(response.body, {
