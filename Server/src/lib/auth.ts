@@ -115,9 +115,8 @@ export const auth = betterAuth({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
       accessType: "offline",
-      // This allow user to select email from multiple email
       prompt: "select_account consent",
-      // redirectURI: `${process.env.BETTER_AUTH_URL}/api/auth/callback/google`,
+      redirectURI: `${process.env.APP_URL}/api/auth/callback/google`,
     },
   },
 });
