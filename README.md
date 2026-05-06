@@ -261,7 +261,10 @@ Register → Email Verification → Login → Session Cookie → Protected Route
 ## 👨‍💻 Author
 
 **Shad Bin Abi Aydid**
-- GitHub: [@shad-bin-abi-aydid](https://github.com/shad-bin-abi-aydid)
+- Portfolio: [shadaydid.com](https://shadaydid.com)
+- GitHub: [@Shad-Bin-Abi-Aydid](https://github.com/Shad-Bin-Abi-Aydid)
+- LinkedIn: [shad-aydid](https://www.linkedin.com/in/shad-aydid)
+
 
 ---
 
