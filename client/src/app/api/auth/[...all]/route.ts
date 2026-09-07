@@ -23,7 +23,15 @@ async function handler(request: NextRequest) {
 
   const responseHeaders = new Headers();
   response.headers.forEach((value, key) => {
-    if (key.toLowerCase() !== "set-cookie") {
+    const lowerKey = key.toLowerCase();
+    // fetch() already decompresses the body but leaves these headers as-is,
+    // so forwarding them verbatim tells the browser to decode bytes that
+    // are no longer encoded (causes net::ERR_CONTENT_DECODING_FAILED)
+    if (
+      lowerKey !== "set-cookie" &&
+      lowerKey !== "content-encoding" &&
+      lowerKey !== "content-length"
+    ) {
       responseHeaders.set(key, value);
     }
   });
