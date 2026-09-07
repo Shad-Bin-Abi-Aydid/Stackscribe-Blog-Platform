@@ -1,7 +1,7 @@
 import { blogService } from "@/services/blog.service";
 import { userServices } from "@/services/user.services";
 import { BlogPost } from "@/types";
-import { Eye, FileText, MessageCircle, Star } from "lucide-react";
+import { Eye, FileText, MessageCircle, Star, MailWarning } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -53,6 +53,18 @@ export default async function UserDashboard() {
 
   return (
     <div className="space-y-8">
+      {/* Email verification nudge */}
+      {!data.user.emailVerified && (
+        <div className="flex items-start gap-3 rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-900/20 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
+          <MailWarning className="h-4 w-4 mt-0.5 shrink-0" />
+          <p>
+            Your email address isn&apos;t verified yet. Check your inbox
+            (including spam) for the verification link — you can keep using
+            your account in the meantime.
+          </p>
+        </div>
+      )}
+
       {/* Welcome */}
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">

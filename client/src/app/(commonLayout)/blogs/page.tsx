@@ -9,6 +9,7 @@ import { blogService } from "@/services/blog.service";
 import PaginationControls from "@/components/ui/pagination-controls";
 import { BlogPost } from "@/types";
 import BlogCard from "@/components/modules/homepage/BlogCard";
+import BlogListMessage from "@/components/modules/homepage/BlogListMessage";
 
 export default async function BlogsPost({
   searchParams,
@@ -18,6 +19,7 @@ export default async function BlogsPost({
   const { page } = await searchParams;
   const response = await blogService.getBlogPosts({ page, limit:"9" });
 
+  const posts: BlogPost[] = response?.data?.data ?? [];
   const pagination = response?.data?.pagination || {
     limit: 9,
     page: 1,
@@ -33,9 +35,15 @@ export default async function BlogsPost({
           </h2>
           <Suspense fallback={<BlogListSkeleton />}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {response?.data?.data?.map((post: BlogPost) => (
-                <BlogCard key={post.id} post={post} />
-              ))}
+              {response?.error ? (
+                <BlogListMessage text="Couldn't load articles right now. Please try again in a moment." />
+              ) : posts.length === 0 ? (
+                <BlogListMessage text="No articles found." />
+              ) : (
+                posts.map((post: BlogPost) => (
+                  <BlogCard key={post.id} post={post} />
+                ))
+              )}
             </div>
           </Suspense>
         </div>

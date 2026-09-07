@@ -1,13 +1,21 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BookOpen, ChevronDown, PenLine, Sparkles } from "lucide-react";
+import {
+  BookOpen,
+  ChevronDown,
+  Code2,
+  Moon,
+  PenLine,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import Link from "next/link";
 import HeroHeading from "./HeroHeading";
 
-const stats = [
-  { label: "Articles Published", value: "500+" },
-  { label: "Active Writers", value: "120+" },
-  { label: "Monthly Readers", value: "10K+" },
+const highlights = [
+  { icon: Code2, label: "Open Source" },
+  { icon: ShieldCheck, label: "Secure Auth & OAuth" },
+  { icon: Moon, label: "Dark Mode Included" },
 ];
 
 export default function HeroSection() {
@@ -71,18 +79,16 @@ export default function HeroSection() {
           </Button>
         </div>
 
-        {/* stats */}
+        {/* highlights */}
         <div className="animate-fade-up delay-450 mt-20 grid grid-cols-3 gap-4 max-w-lg mx-auto">
-          {stats.map((s) => (
+          {highlights.map((h) => (
             <div
-              key={s.label}
-              className="flex flex-col items-center gap-1 rounded-2xl border border-indigo-100 bg-white/70 backdrop-blur px-4 py-5 shadow-sm dark:border-indigo-900/50 dark:bg-indigo-950/40 transition-transform duration-200 hover:-translate-y-1"
+              key={h.label}
+              className="flex flex-col items-center gap-2 rounded-2xl border border-indigo-100 bg-white/70 backdrop-blur px-4 py-5 shadow-sm dark:border-indigo-900/50 dark:bg-indigo-950/40 transition-transform duration-200 hover:-translate-y-1"
             >
-              <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                {s.value}
-              </span>
+              <h.icon className="size-6 text-indigo-600 dark:text-indigo-400" />
               <span className="text-xs text-slate-500 dark:text-slate-400 text-center leading-snug">
-                {s.label}
+                {h.label}
               </span>
             </div>
           ))}

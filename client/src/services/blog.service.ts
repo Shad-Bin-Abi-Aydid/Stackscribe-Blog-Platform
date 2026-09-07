@@ -57,6 +57,7 @@ export const blogService = {
 
       return { data: data, error: null };
     } catch (err) {
+      console.error("getBlogPosts failed:", err);
       return { data: null, error: { message: "Something went wrong" } };
     }
   },
@@ -69,6 +70,7 @@ export const blogService = {
 
       return { data: data, error: null };
     } catch (err) {
+      console.error("getBlogById failed:", err);
       return { data: null, error: { message: "Something went wrong" } };
     }
   },
